@@ -23,12 +23,14 @@
       font-size: 62.5%;
       font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
       overflow: hidden;
+      cursor: pointer;
     }
 
     .container {
       width: 50rem;
       height: 20rem;
       position: relative;
+      overflow: hidden; /* Yeh ensure karega ki text white lines ke andar hi rahe */
     }
 
     .svg-container {
@@ -54,44 +56,12 @@
       transition: all 0.3s ease;
     }
 
-    .sound {
-      position: fixed;
-      color: #a5b9c7;
-      font-size: 1.6rem;
-      bottom: 2rem;
-      right: 2rem;
-      text-decoration: underline;
-      cursor: pointer;
-      user-select: none;
-      padding: 10px 15px;
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 8px;
-      transition: all 0.3s ease;
-      z-index: 999;
-    }
-    
-    .sound:hover {
-      background: rgba(255, 255, 255, 0.1);
-      color: #ffffff;
-    }
-    
-    .sound--off {
-      text-decoration: line-through;
-      opacity: 0.5;
-    }
-
     /* Responsive */
     @media screen and (max-width: 520px) {
       .container {
         width: 90vw;
         height: auto;
         aspect-ratio: 5/2;
-      }
-      .sound {
-        font-size: 1.2rem;
-        bottom: 1rem;
-        right: 1rem;
-        padding: 6px 12px;
       }
     }
   </style>
@@ -117,15 +87,13 @@
   <div class="mo-container"></div>
 </div>
 
-<!-- Audio Elements - Fixed MIME Types -->
+<!-- Audio Elements -->
 <audio class="blup" style="display: none" preload="auto">
   <source src="https://www.freesound.org/data/previews/265/265115_4373976-lq.mp3" type="audio/mpeg">
 </audio>
 <audio class="blop" style="display: none" preload="auto">
   <source src="https://www.freesound.org/data/previews/265/265115_4373976-lq.mp3" type="audio/mpeg">
 </audio>
-
-<div class="sound">🔊 Sound</div>
 
 <!-- ====== SCRIPTS ====== -->
 <script src='https://cdn.jsdelivr.net/mojs/latest/mo.min.js'></script>
@@ -152,8 +120,7 @@
       colTxt: "#763c8c",
       colHeart: "#fa4843",
       blup: qs(".blup"),
-      blop: qs(".blop"),
-      sound: qs(".sound")
+      blop: qs(".blop")
     };
 
     // Custom Heart Shape
@@ -225,28 +192,28 @@
           },
           onComplete: () => {
             [el.l, el.o, el.v, el.e].forEach(el => el.style.opacity = 0);
-            if (el.blop) el.blop.play().catch(() => {});
+            if (isSoundOn && el.blop) el.blop.play().catch(() => {});
           }
         }),
         new mojs.Tween({
           duration: move * 2 + boom,
           onComplete: () => {
             [el.y, el.o2].forEach(el => el.style.opacity = 0);
-            if (el.blop) el.blop.play().catch(() => {});
+            if (isSoundOn && el.blop) el.blop.play().catch(() => {});
           }
         }),
         new mojs.Tween({
           duration: move * 3 + boom * 2 - delta,
           onComplete: () => {
             el.i.style.opacity = 0;
-            if (el.blop) el.blop.play().catch(() => {});
+            if (isSoundOn && el.blop) el.blop.play().catch(() => {});
           }
         }),
         new mojs.Tween({
           duration: move * 3 + boom * 2,
           onComplete: () => {
             el.u.style.opacity = 0;
-            if (el.blup) el.blup.play().catch(() => {});
+            if (isSoundOn && el.blup) el.blup.play().catch(() => {});
           }
         }),
         new mojs.Tween({
@@ -500,50 +467,22 @@
       ]);
     };
 
-    // Start Animation Loop
+    const volume = 0.2;
+    let isSoundOn = false;
+
+    try {
+      if (el.blup) el.blup.volume = volume;
+      if (el.blop) el.blop.volume = volume;
+    } catch(e) {}
+
     const loveTl = crtLoveTl().play();
     setInterval(() => {
       loveTl.replay();
     }, 4300);
 
-    // Sound Controls
-    const volume = 0.2;
-    let isSoundOn = true;
-
-    // Try to load audio with fallback
-    try {
-      if (el.blup) el.blup.volume = volume;
-      if (el.blop) el.blop.volume = volume;
-    } catch(e) {
-      console.log('Audio not available');
-    }
-
-    el.sound.addEventListener("click", function() {
-      isSoundOn = !isSoundOn;
-      try {
-        if (el.blup) el.blup.volume = isSoundOn ? volume : 0;
-        if (el.blop) el.blop.volume = isSoundOn ? volume : 0;
-      } catch(e) {}
-      
-      if (isSoundOn) {
-        this.classList.remove("sound--off");
-        this.textContent = "🔊 Sound";
-      } else {
-        this.classList.add("sound--off");
-        this.textContent = "🔇 Sound";
-      }
+    window.addEventListener("click", function() {
+      isSoundOn = true;
     });
-
-    // Handle audio loading errors gracefully
-    try {
-      [el.blup, el.blop].forEach(audio => {
-        if (audio) {
-          audio.addEventListener('error', function() {
-            console.log('Audio could not be loaded - continuing without sound');
-          });
-        }
-      });
-    } catch(e) {}
 
   })();
 </script>
