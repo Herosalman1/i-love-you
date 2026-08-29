@@ -19,7 +19,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      background-color: #282a36;
+      background-color: #000000; /* Black background match karne ke liye */
       font-size: 62.5%;
       font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
       overflow: hidden;
@@ -30,7 +30,7 @@
       width: 50rem;
       height: 20rem;
       position: relative;
-      overflow: hidden; /* Yeh ensure karega ki text white lines ke andar hi rahe */
+      overflow: hidden; 
     }
 
     .svg-container {
@@ -52,7 +52,7 @@
     }
 
     .lttr {
-      fill: #a5b9c7;
+      fill: #ea80b0; /* Tumhara original pink theme color */
       transition: all 0.3s ease;
     }
 
@@ -117,8 +117,8 @@
       u: qs(".lttr--U"),
       lineLeft: qs(".line--left"),
       lineRight: qs(".line--rght"),
-      colTxt: "#763c8c",
-      colHeart: "#fa4843",
+      colTxt: "#ea80b0", // Match theme color
+      colHeart: "#ea80b0", // Match heart color to pink theme
       blup: qs(".blup"),
       blop: qs(".blop")
     };
@@ -461,7 +461,7 @@
         }),
         // Booms
         ...crtBoom(move, -64, 46),
-        ...crtBoom(move * 2 + boom, 18, 34),
+        ...crtWordBoom = crtBoom(move * 2 + boom, 18, 34),
         ...crtBoom(move * 3 + boom * 2 - delta, -64, 34),
         ...crtBoom(move * 3 + boom * 2, 45, 34)
       ]);
